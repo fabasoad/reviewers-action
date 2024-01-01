@@ -2,6 +2,25 @@
 
 reviewers_filename="$1"
 changed_files_list="$2"
+
+build_reviewers_str() {
+  local -n data_ref=$1
+  n=0
+  reviewers_str=""
+  for github_slug in "${!data_ref[@]}"
+  do
+    n=$((n + 1))
+    if [ $n -gt 1 ]; then
+      reviewers_str="${reviewers_str},"
+    fi
+    if [[ $github_slug == "@"* ]]; then
+      github_slug="${github_slug:1}"
+    fi
+    reviewers_str="${reviewers_str}\"${github_slug}\""
+  done
+  echo "${reviewers_str}"
+}
+
 # Prepare hash maps with the reviewers list. Both IC and team handles.
 declare -A reviewers_ic_map
 declare -A reviewers_team_map
@@ -15,33 +34,19 @@ for changed_file in ${changed_files_list}; do
       continue
     fi
     if [[ $github_slug == *"/"* ]]; then
+      # shellcheck disable=SC2034
       reviewers_team_map[$github_slug]=1
     else
+      # shellcheck disable=SC2034
       reviewers_ic_map[$github_slug]=1
     fi
   done
 done
+
 # Comma-separated list with IC reviewers
-n=0
-reviewers_ic_str=""
-for i in "${!reviewers_ic_map[@]}"
-do
-  n=$((n + 1))
-  if [ $n -gt 1 ]; then
-    reviewers_ic_str="${reviewers_ic_str},"
-  fi
-  reviewers_ic_str="${reviewers_ic_str}\"${i}\""
-done
+reviewers_ic_str=$(build_reviewers_str reviewers_ic_map)
 # Comma-separated list with team reviewers
-n=0
-reviewers_team_str=""
-for i in "${!reviewers_team_map[@]}"
-do
-  n=$((n + 1))
-  if [ $n -gt 1 ]; then
-    reviewers_team_str="${reviewers_team_str},"
-  fi
-  reviewers_team_str="${reviewers_team_str}\"${i}\""
-done
+reviewers_team_str=$(build_reviewers_str reviewers_team_map)
+
 json="{\"reviewers\":[${reviewers_ic_str}],\"teamReviewers\":[${reviewers_team_str}]}"
 echo "json=${json}" >> "$GITHUB_OUTPUT"

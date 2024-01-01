@@ -38,7 +38,7 @@ jobs:
             });
             core.debug('Response:');
             core.debug(resp);
-            const actualUsers = resp.data.users.map({ login } => login);
+            const actualUsers = resp.data.users.map(({ login }) => login);
             const EXPECTED_USERS = ['fabasoad', 'animewka', 'Sasha4e'];
             if (actualUsers.length != EXPECTED_USERS.length) {
               core.setFailed(`Expected amount of reviewers: ${EXPECTED_USERS.length}. Actual: ${actualUsers.length}`);

@@ -1,0 +1,32 @@
+---
+name: Trigger Functional Tests
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/functional-tests.yml
+      - .github/workflows/trigger-functional-tests.yml
+      - .github/REVIEWERS
+      - src/**
+      - action.yml
+
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  create-pr:
+    name: Create PR
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+      - name: Modify files
+        run: |
+          echo $RANDOM > .github/workflows/tests/test1.txt
+          echo $RANDOM > .github/workflows/tests/test2.txt
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "[automation] job #${{ github.run_id }}"

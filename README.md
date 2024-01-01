@@ -2,6 +2,8 @@
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
 ![GitHub release](https://img.shields.io/github/v/release/fabasoad/reviewers-action?include_prereleases)
+![functional-tests](https://github.com/fabasoad/reviewers-action/actions/workflows/functional-tests.yml/badge.svg)
+![security](https://github.com/fabasoad/reviewers-action/actions/workflows/security.yml/badge.svg)
 ![linting](https://github.com/fabasoad/reviewers-action/actions/workflows/linting.yml/badge.svg)
 
 This GitHub action to parse a CODEOWNERS like files and use it to set reviewers
@@ -11,10 +13,6 @@ on PRs.
 
 The following tools have to be installed for successful work of this GitHub action:
 `bash`.
-
-## Permissions
-
-None
 
 ## Inputs
 

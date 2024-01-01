@@ -1,0 +1,18 @@
+---
+name: Functional Tests
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  test-reviewers-file:
+    name: Test REVIEWERS file
+    if: ${{ startsWith(github.event.pull_request.title, '[automation]') }}
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+      - name: Assign reviewers
+        uses: ./

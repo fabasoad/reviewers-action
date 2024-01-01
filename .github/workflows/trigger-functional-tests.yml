@@ -15,9 +15,9 @@ defaults:
     shell: sh
 
 jobs:
-  create-pr:
-    name: Create PR
-    timeout-minutes: 5
+  prepare-pr:
+    name: Prepare PR for test
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - name: Checkout ${{ github.repository }}
@@ -51,20 +51,18 @@ jobs:
           script: |
             const sleep = (sec) => new Promise(r => setTimeout(r, sec * 1000));
             while (true) {
-              const resp = await github.rest.pulls.list({
+              const resp = await github.rest.issues.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                state: 'closed',
-                sort: 'created',
-                direction: 'desc',
-                per_page: 1,
-                page: 1
+                issue_number: ${{ steps.create-pr.outputs.pull-request-number }},
               });
               core.debug('Response:');
               core.debug(resp);
-              const expectedPrId = ${{ steps.create-pr.outputs.pull-request-number }};
-              const actualPrId = resp.data[0].id;
-              if (expectedPrId !== actualPrId) {
+              const expectedState = 'closed';
+              const actualState = resp.data.state;
+              if (expectedState !== actualState) {
+                core.debug(`Expected PR state: ${expectedState}. Actual: ${actualState}`)
+                console.log('PR is not closed yet. Sleeping 5 seconds...')
                 await sleep(5);
                 continue;
               }

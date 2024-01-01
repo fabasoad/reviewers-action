@@ -69,10 +69,10 @@ jobs:
               const actualState = resp.data.state;
               if (expectedState !== actualState) {
                 core.debug(`Expected PR state: ${expectedState}. Actual: ${actualState}`)
-                console.log(`PR #${prNumber} is not closed yet. Sleeping 5 seconds...`)
+                console.log(`⏲ PR #${prNumber} is not closed yet. Sleeping 5 seconds...`)
                 await sleep(5);
                 continue;
               }
-              console.log(`PR #${prNumber} is closed ✓`)
+              console.log(`✓ PR #${prNumber} is closed.`)
               break;
             }

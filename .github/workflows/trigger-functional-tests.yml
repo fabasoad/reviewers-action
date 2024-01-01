@@ -24,8 +24,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Modify files
         run: |
-          echo "${{ github.run_id }}\n" > .github/workflows/tests/test1.txt
-          echo "${{ github.run_id }}\n" > .github/workflows/tests/test2.txt
+          echo "${{ github.run_id }}\n" > ci-tests/test1.txt
+          echo "${{ github.run_id }}\n" > ci-tests/test2.txt
       - name: Generate GitHub token
         id: app-token
         uses: actions/create-github-app-token@v1

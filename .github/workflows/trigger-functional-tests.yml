@@ -33,8 +33,12 @@ jobs:
           app-id: ${{ vars.APP_PR_ACCESS_ID }}
           private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
       - name: Create PR
+        id: create-pr
         uses: peter-evans/create-pull-request@v5
         with:
           base: ${{ github.head_ref }}
           title: "[automation] job #${{ github.run_id }}"
           token: ${{ steps.app-token.outputs.token }}
+      - name: Print PR info
+        run: |
+          echo "::notice title=PR #${{ steps.create-pr.outputs.pull-request-number }} is created::${{ steps.create-pr.outputs.pull-request-url }}"

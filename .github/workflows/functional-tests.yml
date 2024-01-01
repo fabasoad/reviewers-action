@@ -42,13 +42,13 @@ jobs:
             });
             core.debug('Response:');
             core.debug(resp);
-            const actualUsers = resp.data.users.map(({ login }) => login);
-            const EXPECTED_USERS = ['fabasoad', 'animewka', 'Sasha4e'];
-            if (actualUsers.length != EXPECTED_USERS.length) {
-              core.setFailed(`Expected amount of reviewers: ${EXPECTED_USERS.length}. Actual: ${actualUsers.length}`);
+            const actualReviewers = resp.data.users.map(({ login }) => login);
+            const expectedReviewers = ['fabasoad', 'animewka', 'Sasha4e'];
+            if (actualReviewers.length != expectedReviewers.length) {
+              core.setFailed(`Expected amount of reviewers: ${expectedReviewers.length}. Actual: ${actualReviewers.length}`);
             }
-            if (JSON.stringify(EXPECTED_USERS.sort()) !== JSON.stringify(actualUsers.sort())) {
-              core.setFailed(`Expected reviewers: ${EXPECTED_USERS}. Actual: ${actualUsers}`);
+            if (JSON.stringify(expectedReviewers.sort()) !== JSON.stringify(actualReviewers.sort())) {
+              core.setFailed(`Expected reviewers: ${expectedReviewers}. Actual: ${actualReviewers}`);
             }
       - name: Close PR
         env:

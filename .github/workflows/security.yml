@@ -17,6 +17,9 @@ jobs:
   directory-scanning:
     name: Directory scanning
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout ${{ github.repository }}
         uses: actions/checkout@v4

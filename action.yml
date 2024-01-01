@@ -35,10 +35,9 @@ runs:
         INPUT_REVIEWERS_FILENAME: "${{ inputs.reviewers-filename }}"
       shell: bash
       run: |
-        ./get-reviewers.sh \
+        ${{ github.action_path }}/src/get-reviewers.sh \
           "${INPUT_REVIEWERS_FILENAME}" \
           "${{ steps.changed-files.outputs.all_changed_files }}"
-      working-directory: ${{ github.action_path }}/src
     - name: Assign to PR
       uses: actions/github-script@v7
       with:

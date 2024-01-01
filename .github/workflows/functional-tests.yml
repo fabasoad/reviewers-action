@@ -47,13 +47,8 @@ jobs:
               core.setFailed(`Expected reviewers: ${EXPECTED_USERS}. Actual: ${actualUsers}`);
             }
       - name: Close PR
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          script: |
-            github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              state: 'closed'
-            });
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          comment="Reviewers has been assigned [successfully](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) :white_check_mark:"
+          gh pr close --comment "${comment}" --delete-branch "1"

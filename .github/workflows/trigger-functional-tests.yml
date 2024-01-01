@@ -1,0 +1,74 @@
+---
+name: Trigger Functional Tests
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/functional-tests.yml
+      - .github/workflows/trigger-functional-tests.yml
+      - .github/REVIEWERS
+      - src/**
+      - action.yml
+
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  prepare-pr:
+    name: Prepare PR for test
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_PR_ACCESS_ID }}
+          private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+      - name: Modify files
+        run: |
+          echo "${{ github.run_id }}" > ci-tests/test1.txt
+          echo "${{ github.run_id }}" > ci-tests/test2.txt
+      - name: Create PR
+        id: create-pr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          base: ${{ github.head_ref }}
+          title: "[automation] job #${{ github.run_id }}"
+          token: ${{ steps.app-token.outputs.token }}
+      - name: Print PR info
+        run: |
+          pr_number="${{ steps.create-pr.outputs.pull-request-number }}"
+          pr_url="${{ steps.create-pr.outputs.pull-request-url }}"
+          echo "::notice title=PR #${pr_number} is created::${pr_url}"
+      - name: Wait until PR is closed
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const prNumber = ${{ steps.create-pr.outputs.pull-request-number }};
+            const sleep = (sec) => new Promise(r => setTimeout(r, sec * 1000));
+            while (true) {
+              const resp = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+              core.debug('Response:');
+              core.debug(resp);
+              const expectedState = 'closed';
+              const actualState = resp.data.state;
+              if (expectedState !== actualState) {
+                core.debug(`Expected PR state: ${expectedState}. Actual: ${actualState}`)
+                console.log(`PR #${prNumber} is not closed yet. Sleeping 5 seconds...`)
+                await sleep(5);
+                continue;
+              }
+              break;
+            }

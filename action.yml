@@ -12,6 +12,10 @@ inputs:
     description: "Auth token with permissions to assign reviewers to a PR."
     required: false
     default: "${{ github.token }}"
+  pr-number:
+    description: "PR number to assign reviewers to."
+    required: false
+    default: "${{ github.event.pull_request.number }}"
   reviewers-filename:
     description: "CODEOWNERS like filename."
     required: false
@@ -19,11 +23,23 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Validate installed tools
+      id: tools
+      shell: sh
+      run: ./validate-installed-tools.sh
+      working-directory: ${{ github.action_path }}/src
+    - name: Setup curl
+      if: steps.tools.outputs.curl == 'false'
+      shell: sh
+      run: ./install-curl.sh "${RUNNER_OS}"
+      working-directory: ${{ github.action_path }}/src
     - name: Setup node
+      if: steps.tools.outputs.node == 'false' || steps.tools.outputs.npm == 'false'
       uses: actions/setup-node@v4
       with:
-        node-version: "latest"
+        node-version: "20"
     - name: Install codeowners
+      if: steps.tools.outputs.codeowners == 'false'
       shell: sh
       run: npm install -g codeowners
     - name: Get list of changed files
@@ -38,16 +54,30 @@ runs:
         ${{ github.action_path }}/src/get-reviewers.sh \
           "${INPUT_REVIEWERS_FILENAME}" \
           "${{ steps.changed-files.outputs.all_changed_files }}"
-    - name: Assign to PR
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const { reviewers, teamReviewers } =
-            JSON.parse('${{ steps.reviewers.outputs.json }}');
-          github.rest.pulls.requestReviewers({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.issue.number,
-            reviewers: reviewers,
-            team_reviewers: teamReviewers
-          });
+    - name: Assign reviewers
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        INPUT_PR_NUMBER: ${{ inputs.pr-number }}
+      shell: sh
+      run: |
+        ./assign-reviewers.sh \
+          "${GITHUB_API_URL}" \
+          "${GITHUB_REPOSITORY}" \
+          "${GH_TOKEN}" \
+          "${INPUT_PR_NUMBER}" \
+          "${{ steps.reviewers.outputs.json }}"
+      working-directory: ${{ github.action_path }}/src
+#    - name: Assign to PR 2
+#      uses: actions/github-script@v7
+#      with:
+#        github-token: ${{ inputs.github-token }}
+#        script: |
+#          const { reviewers, teamReviewers } =
+#            JSON.parse('${{ steps.reviewers.outputs.json }}');
+#          github.rest.pulls.requestReviewers({
+#            owner: context.repo.owner,
+#            repo: context.repo.repo,
+#            pull_number: context.issue.number,
+#            reviewers: reviewers,
+#            team_reviewers: teamReviewers
+#          });

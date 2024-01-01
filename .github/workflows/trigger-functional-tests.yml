@@ -19,9 +19,6 @@ jobs:
     name: Create PR
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout ${{ github.repository }}
         uses: actions/checkout@v4
@@ -29,16 +26,15 @@ jobs:
         run: |
           echo $RANDOM > .github/workflows/tests/test1.txt
           echo $RANDOM > .github/workflows/tests/test2.txt
-      #      - name: Generate GitHub token
-      #        id: app-token
-      #        uses: actions/create-github-app-token@v1
-      #        with:
-      #          app-id: ${{ vars.APP_PR_ACCESS_ID }}
-      #          private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
+      - name: Generate GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_PR_ACCESS_ID }}
+          private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
           base: ${{ github.head_ref }}
           title: "[automation] job #${{ github.run_id }}"
-          #          token: ${{ steps.app-token.outputs.token }}
-#          token: ${{ secrets.TEST_PAT }}
+          token: ${{ steps.app-token.outputs.token }}

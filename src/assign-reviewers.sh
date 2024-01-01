@@ -4,7 +4,7 @@ github_api_url="$1"
 github_repository="$2"
 github_token="$3"
 pr_number="$4"
-reviewers_json="$5"
+reviewers_json=$5
 
 curl -L \
   -X POST \

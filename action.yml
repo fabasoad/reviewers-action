@@ -25,7 +25,7 @@ runs:
   steps:
     - name: Validate installed tools
       id: tools
-      shell: sh
+      shell: bash
       run: ./validate-installed-tools.sh
       working-directory: ${{ github.action_path }}/src
     - name: Setup curl
@@ -65,7 +65,7 @@ runs:
           "${GITHUB_REPOSITORY}" \
           "${GH_TOKEN}" \
           "${INPUT_PR_NUMBER}" \
-          "${{ steps.reviewers.outputs.json }}"
+          '${{ steps.reviewers.outputs.json }}'
       working-directory: ${{ github.action_path }}/src
 #    - name: Assign to PR 2
 #      uses: actions/github-script@v7

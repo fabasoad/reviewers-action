@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-# shellcheck disable=SC2039
+#!/usr/bin/env bash
 
 node_installed="false"
 if command -v node &> /dev/null; then

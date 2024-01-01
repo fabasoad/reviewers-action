@@ -3,7 +3,7 @@ name: Functional Tests
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened]
     paths:
       - ci-tests/**
 

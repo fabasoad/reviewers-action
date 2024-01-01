@@ -24,7 +24,7 @@ with:
   # to ${{ github.token }}.
   github-token: "${{ secrets.GITHUB_TOKEN }}"
   # (Optional) PR number to assign reviewers to. Defaults to ${{ github.event.pull_request.number }},
-  # i.e. it defaults to the current PR in case trigger is "pull_request".
+  # i.e. it defaults to the current PR if trigger is "pull_request".
   pr-number: "25"
   # (Optional) CODEOWNERS like filename. Defaults to "REVIEWERS".
   reviewers-filename: "REVIEWERS"

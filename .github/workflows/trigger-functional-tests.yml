@@ -71,5 +71,6 @@ jobs:
                 await sleep(5);
                 continue;
               }
+              console.log(`PR #${prNumber} is closed ✓`)
               break;
             }

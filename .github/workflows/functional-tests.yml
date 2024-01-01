@@ -3,8 +3,6 @@ name: Functional Tests
 
 on:
   pull_request:
-    branches:
-      - main
     types: [opened]
     paths:
       - ci-tests/**
@@ -12,6 +10,7 @@ on:
 jobs:
   test-reviewers-file:
     name: Test REVIEWERS file
+    if: ${{ startsWith(github.event.pull_request.title, '[automation]') }}
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:

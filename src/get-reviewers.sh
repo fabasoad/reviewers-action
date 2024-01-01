@@ -48,5 +48,5 @@ reviewers_ic_str=$(build_reviewers_str reviewers_ic_map)
 # Comma-separated list with team reviewers
 reviewers_team_str=$(build_reviewers_str reviewers_team_map)
 
-json="{\"reviewers\":[${reviewers_ic_str}],\"teamReviewers\":[${reviewers_team_str}]}"
+json="{\"reviewers\":[${reviewers_ic_str}],\"team_reviewers\":[${reviewers_team_str}]}"
 echo "json=${json}" >> "$GITHUB_OUTPUT"

@@ -2,7 +2,9 @@
 name: Security
 
 on: # yamllint disable-line rule:truthy
-  pull_request: {}
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - "main"
@@ -14,7 +16,6 @@ defaults:
 jobs:
   directory-scanning:
     name: Directory scanning
-    if: ${{ github.event_name == 'push' || !startsWith(github.event.pull_request.title, '[automation]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout ${{ github.repository }}

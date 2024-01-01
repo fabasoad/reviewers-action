@@ -3,6 +3,8 @@ name: Trigger Functional Tests
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - .github/workflows/functional-tests.yml
       - .github/workflows/trigger-functional-tests.yml
@@ -40,6 +42,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           base: ${{ github.head_ref }}
+          branch: automation/job-${{ github.run_id }}
           title: "[automation] job #${{ github.run_id }}"
           token: ${{ steps.app-token.outputs.token }}
       - name: Print PR info
@@ -66,9 +69,10 @@ jobs:
               const actualState = resp.data.state;
               if (expectedState !== actualState) {
                 core.debug(`Expected PR state: ${expectedState}. Actual: ${actualState}`)
-                console.log(`PR #${prNumber} is not closed yet. Sleeping 5 seconds...`)
+                console.log(`⏲ PR #${prNumber} is not closed yet. Sleeping 5 seconds...`)
                 await sleep(5);
                 continue;
               }
+              console.log(`✓ PR #${prNumber} is closed.`)
               break;
             }

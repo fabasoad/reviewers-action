@@ -50,5 +50,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
+          pr_number="${{ github.event.pull_request.number }}"
           comment="Reviewers has been assigned [successfully](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) :white_check_mark:"
-          gh pr close --comment "${comment}" --delete-branch "1"
+          gh pr close "${pr_number}" --comment "${comment}" --delete-branch

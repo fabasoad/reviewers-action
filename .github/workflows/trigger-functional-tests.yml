@@ -29,4 +29,5 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
+          base: main
           title: "[automation] job #${{ github.run_id }}"

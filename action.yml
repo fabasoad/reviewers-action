@@ -28,7 +28,7 @@ runs:
       run: npm install -g codeowners
     - name: Get list of changed files
       id: changed-files
-      uses: jitterbit/get-changed-files@v1
+      uses: tj-actions/changed-files@v41
     - name: Collect reviewers
       id: reviewers
       env:
@@ -37,7 +37,7 @@ runs:
       run: |
         ./get-reviewers.sh \
           "${INPUT_REVIEWERS_FILENAME}" \
-          "${{ steps.changed-files.outputs.all }}"
+          "${{ steps.changed-files.outputs.all_changed_files }}"
       working-directory: ${{ github.action_path }}/src
     - name: Assign to PR
       uses: actions/github-script@v7

@@ -24,8 +24,31 @@ jobs:
         uses: ./
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-      - name: Close PR
-        if: always()
-        uses: superbrothers/close-pull-request@v3
+      - name: Validate assigned reviewers
+        uses: actions/github-script@v7
         with:
-          github_token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { users } = await github.rest.pulls.listRequestedReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            const EXPECTED_USERS = ['animewka', 'Sasha4e'];
+            if (users.length != EXPECTED_USERS.length) {
+              core.setFailed(`Expected amount of users: ${EXPECTED_USERS.length}. Actual: ${users.length}`);
+            }
+            if (JSON.stringify(EXPECTED_USERS.sort()) !== JSON.stringify(users.sort())) {
+              core.setFailed(`Expected users: ${EXPECTED_USERS}. Actual: ${users}`);
+            }
+      - name: Close PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              state: 'closed'
+            });

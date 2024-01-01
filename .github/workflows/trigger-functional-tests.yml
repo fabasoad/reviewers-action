@@ -40,4 +40,5 @@ jobs:
         with:
           base: ${{ github.head_ref }}
           title: "[automation] job #${{ github.run_id }}"
-#          token: ${{ steps.app-token.outputs.token }}
+          #          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ secrets.TEST_PAT }}

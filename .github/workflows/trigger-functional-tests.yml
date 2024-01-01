@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: read
       issues: write
       pull-requests: write

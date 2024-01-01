@@ -10,4 +10,5 @@ on: # yamllint disable-line rule:truthy
 jobs:
   pre-commit:
     name: Pre-commit
+    if: ${{ github.event_name == 'push' || !startsWith(github.event.pull_request.title, '[automation]') }}
     uses: fabasoad/reusable-workflows/.github/workflows/wf-pre-commit.yml@main

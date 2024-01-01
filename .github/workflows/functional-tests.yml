@@ -1,0 +1,59 @@
+---
+name: Functional Tests
+
+on:
+  pull_request:
+    types: [opened]
+    paths:
+      - ci-tests/**
+
+jobs:
+  test-reviewers-file:
+    name: Test REVIEWERS file
+    if: ${{ startsWith(github.event.pull_request.title, '[automation]') }}
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_PR_ACCESS_ID }}
+          private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Assign reviewers
+        uses: ./
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+      - name: Validate assigned reviewers
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const resp = await github.rest.pulls.listRequestedReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            core.debug('Response:');
+            core.debug(resp);
+            const actualUsers = resp.data.users.map(({ login }) => login);
+            const EXPECTED_USERS = ['fabasoad', 'animewka', 'Sasha4e'];
+            if (actualUsers.length != EXPECTED_USERS.length) {
+              core.setFailed(`Expected amount of reviewers: ${EXPECTED_USERS.length}. Actual: ${actualUsers.length}`);
+            }
+            if (JSON.stringify(EXPECTED_USERS.sort()) !== JSON.stringify(actualUsers.sort())) {
+              core.setFailed(`Expected reviewers: ${EXPECTED_USERS}. Actual: ${actualUsers}`);
+            }
+      - name: Close PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          comment="Reviewers has been assigned [successfully](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) :white_check_mark:"
+          gh pr close "${pr_number}" --comment "${comment}" --delete-branch

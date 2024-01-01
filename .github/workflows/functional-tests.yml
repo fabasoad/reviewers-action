@@ -4,6 +4,8 @@ name: Functional Tests
 on:
   pull_request:
     types: [opened]
+    paths:
+      - ci-tests/**
 
 jobs:
   test-reviewers-file:

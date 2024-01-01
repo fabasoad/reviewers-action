@@ -12,14 +12,16 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@v4
       - name: Generate GitHub token
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.APP_PR_ACCESS_ID }}
           private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
       - name: Assign reviewers
         uses: ./
         with:

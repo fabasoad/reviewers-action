@@ -54,7 +54,7 @@ jobs:
           branch: automation/job-${{ github.run_id }}
           title: "[automation] job #${{ github.run_id }}"
           token: ${{ steps.app-token.outputs.token }}
-      - name: Print PR info
+      - name: Print notice about PR creation
         run: |
           pr_number="${{ steps.create-pr.outputs.pull-request-number }}"
           pr_url="${{ steps.create-pr.outputs.pull-request-url }}"
@@ -85,3 +85,8 @@ jobs:
               console.log(`✓ PR #${prNumber} is closed.`)
               break;
             }
+      - name: Print notice about PR closing
+        run: |
+          pr_number="${{ steps.create-pr.outputs.pull-request-number }}"
+          pr_url="${{ steps.create-pr.outputs.pull-request-url }}"
+          echo "::notice title=PR #${pr_number} is closed::${pr_url}"

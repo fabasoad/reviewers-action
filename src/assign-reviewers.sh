@@ -6,7 +6,8 @@ github_token="$3"
 pr_number="$4"
 reviewers_json=$5
 
-curl -L \
+curl -sSL \
+  -o /dev/null \
   -X POST \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer ${github_token}" \

@@ -11,6 +11,15 @@ on:
       - .github/REVIEWERS
       - src/**
       - action.yml
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/functional-tests.yml
+      - .github/workflows/trigger-functional-tests.yml
+      - .github/REVIEWERS
+      - src/**
+      - action.yml
 
 defaults:
   run:

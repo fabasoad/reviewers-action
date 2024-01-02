@@ -9,6 +9,10 @@ on: # yamllint disable-line rule:truthy
     branches:
       - main
 
+permissions:
+  contents: read
+  security-events: write
+
 defaults:
   run:
     shell: sh
@@ -37,9 +41,6 @@ jobs:
     name: Directory scanning
     if: ${{ !startsWith(github.event.pull_request.title, '[automation]') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
     steps:
       - name: Checkout ${{ github.repository }}
         uses: actions/checkout@v4

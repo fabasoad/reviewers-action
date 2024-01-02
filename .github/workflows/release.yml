@@ -10,6 +10,8 @@ jobs:
   create-release:
     name: Create release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout ${{ github.repository }}
         uses: actions/checkout@v4

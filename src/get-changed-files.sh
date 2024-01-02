@@ -13,5 +13,15 @@ adjust_branch_name() {
 base_ref="$(adjust_branch_name "$1")"
 head_ref="$(adjust_branch_name "$2")"
 
-changed_files=$(git diff --name-only "${base_ref}" "${head_ref}")
-echo "all=${changed_files}" >> "$GITHUB_OUTPUT"
+changed_files_list=$(git diff --name-only "${base_ref}" "${head_ref}")
+
+changed_files_str=""
+n=0
+for changed_file in ${changed_files_list}; do
+  n=$((n + 1))
+  if [ $n -gt 1 ]; then
+    changed_files_str="${changed_files_str} "
+  fi
+  changed_files_str="${changed_files_str}${changed_file}"
+done
+echo "all=${changed_files_str}" >> "$GITHUB_OUTPUT"

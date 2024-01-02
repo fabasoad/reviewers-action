@@ -29,6 +29,9 @@
 - name: "dependencies"
   color: 1d76db
   description: "Upgrade or downgrade of project dependencies."
+- name: "automation"
+  color: 5155b8
+  description: "Issue or PR created by automation."
 
 - name: "in-progress"
   color: fbca04

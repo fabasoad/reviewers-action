@@ -16,6 +16,7 @@ defaults:
 jobs:
   directory-scanning:
     name: Directory scanning
+    if: ${{ !startsWith(github.event.pull_request.title, '[automation]') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

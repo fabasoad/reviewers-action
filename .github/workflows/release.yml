@@ -11,7 +11,8 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get changelog
@@ -22,7 +23,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           name: ${{ github.ref_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             # Changelog
 

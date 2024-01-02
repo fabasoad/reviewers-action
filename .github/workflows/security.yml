@@ -7,13 +7,32 @@ on: # yamllint disable-line rule:truthy
       - main
   push:
     branches:
-      - "main"
+      - main
 
 defaults:
   run:
     shell: sh
 
 jobs:
+  code-scanning:
+    name: Code scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "javascript"
+      - name: Perform CodeQL Analysis
+        id: codeql-analysis
+        uses: github/codeql-action/analyze@v2
+      - name: Upload to GHAS
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          category: "code-scanning"
+          sarif_file: "${{ steps.codeql-analysis.outputs.sarif-output }}"
   directory-scanning:
     name: Directory scanning
     if: ${{ !startsWith(github.event.pull_request.title, '[automation]') }}

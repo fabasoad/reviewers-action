@@ -1,28 +1,22 @@
 #!/usr/bin/env sh
 
-node_installed="false"
-if command -v node &> /dev/null; then
-  node_installed="true"
-fi
-npm_installed="false"
-if command -v npm &> /dev/null; then
-  npm_installed="true"
-fi
-codeowners_installed="false"
-if command -v codeowners &> /dev/null; then
-  codeowners_installed="true"
-fi
-curl_installed="false"
-if command -v curl &> /dev/null; then
-  curl_installed="true"
-fi
-gh_installed="false"
-if command -v gh &> /dev/null; then
-  gh_installed="true"
-fi
+log_info() {
+  printf "[info] [reviewers-action] %s %s\n" "$(date +'%Y-%m-%d %T')" "${1}"
+}
+
+tool_installed() {
+  if which "${1}" >/dev/null 2>&1; then
+    log_info "${1} is found at $(which "${1}")"
+    echo "true"
+  else
+    log_info "${1} is not installed"
+    echo "false"
+  fi
+}
+
 # shellcheck disable=SC2129
-echo "node=${node_installed}" >> "$GITHUB_OUTPUT"
-echo "npm=${npm_installed}" >> "$GITHUB_OUTPUT"
-echo "codeowners=${codeowners_installed}" >> "$GITHUB_OUTPUT"
-echo "curl=${curl_installed}" >> "$GITHUB_OUTPUT"
-echo "gh=${gh_installed}" >> "$GITHUB_OUTPUT"
+echo "node=$(tool_installed "node")" >> "$GITHUB_OUTPUT"
+echo "npm=$(tool_installed "npm")" >> "$GITHUB_OUTPUT"
+echo "codeowners=$(tool_installed "codeowners")" >> "$GITHUB_OUTPUT"
+echo "curl=$(tool_installed "curl")" >> "$GITHUB_OUTPUT"
+echo "gh=$(tool_installed "gh")" >> "$GITHUB_OUTPUT"

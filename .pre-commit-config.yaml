@@ -3,18 +3,30 @@ default_install_hook_types: ["pre-commit", "pre-push"]
 default_stages: ["commit", "push"]
 minimum_pre_commit_version: 2.18.0
 repos:
+  # Linting
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Prettier
+        entry: prettier --write --ignore-unknown
+        language: node
+        types: [text]
+        args: []
+        # https://github.com/prettier/prettier/releases
+        additional_dependencies: ["prettier@3.3.3"]
+        stages: ["commit"]
   # Security
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
       - id: detect-secrets
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
+    rev: v8.20.0
     hooks:
       - id: gitleaks
   # Markdown
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.41.0
+    rev: v0.42.0
     hooks:
       - id: markdownlint-fix
         stages: ["commit"]
@@ -26,19 +38,14 @@ repos:
         stages: ["push"]
   # GitHub Actions
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.1
+    rev: v1.7.3
     hooks:
       - id: actionlint
         args: ["-pyflakes="]
         stages: ["commit"]
   # Other
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-    hooks:
-      - id: prettier
-        stages: ["commit"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-executables-have-shebangs
         stages: ["commit"]

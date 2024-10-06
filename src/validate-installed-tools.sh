@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 node_installed="false"
 if command -v node &> /dev/null; then

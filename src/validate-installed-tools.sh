@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 log_info() {
-  printf "[info] [reviewers-action] %s %s\n" "$(date +'%Y-%m-%d %T')" "${1}"
+  printf "[info] [reviewers-action] %s %s\n" "$(date +'%Y-%m-%d %T')" "${1}" >&2
 }
 
 tool_installed() {

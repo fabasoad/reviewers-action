@@ -35,8 +35,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
-          app-id: ${{ vars.APP_PR_ACCESS_ID }}
-          private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
+          app-id: "${{ vars.APP_PR_ACCESS_ID }}"
+          private-key: "${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}"
       - name: Checkout ${{ github.repository }}
         uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
           echo "${{ github.run_id }}" > ci-tests/test2.txt
       - name: Create PR
         id: create-pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           base: ${{ github.head_ref }}
           branch: automation/job-${{ github.run_id }}

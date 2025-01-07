@@ -35,30 +35,36 @@ runs:
           "${INPUT_PR_NUMBER}" \
           "${INPUT_REVIEWERS_FILENAME}"
       working-directory: ${{ github.action_path }}/src
+
     - name: Validate installed tools
       id: tools
       shell: sh
       run: ./validate-installed-tools.sh
       working-directory: ${{ github.action_path }}/src
+
     - name: Setup curl
       if: steps.tools.outputs.curl == 'false'
       shell: sh
-      run: ./install-curl.sh "${RUNNER_OS}"
+      run: ./install-curl.sh
       working-directory: ${{ github.action_path }}/src
+
     - name: Setup node
       if: steps.tools.outputs.node == 'false' || steps.tools.outputs.npm == 'false'
       uses: actions/setup-node@v4
       with:
         node-version: "23"
+
     - name: Install codeowners
       if: steps.tools.outputs.codeowners == 'false'
       shell: sh
       run: npm install -g codeowners
+
     - name: Get list of changed files
       id: changed-files
       shell: sh
       run: ./get-changed-files.sh "${GITHUB_BASE_REF}" "${GITHUB_HEAD_REF}"
       working-directory: ${{ github.action_path }}/src
+
     - name: Collect reviewers
       id: reviewers
       env:
@@ -68,6 +74,7 @@ runs:
         ${{ github.action_path }}/src/get-reviewers.sh \
           "${INPUT_REVIEWERS_FILENAME}" \
           "${{ steps.changed-files.outputs.all }}"
+
     - name: Assign reviewers
       env:
         GH_TOKEN: ${{ inputs.github-token }}

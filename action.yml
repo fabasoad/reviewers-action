@@ -49,7 +49,7 @@ runs:
       if: steps.tools.outputs.node == 'false' || steps.tools.outputs.npm == 'false'
       uses: actions/setup-node@v4
       with:
-        node-version: "20"
+        node-version: "23"
     - name: Install codeowners
       if: steps.tools.outputs.codeowners == 'false'
       shell: sh

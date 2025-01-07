@@ -15,3 +15,6 @@ jobs:
       contents: read
       security-events: write
     uses: fabasoad/reusable-workflows/.github/workflows/wf-security-sast.yml@main
+    with:
+      code-scanning: true
+      sca: true

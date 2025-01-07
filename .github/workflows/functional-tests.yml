@@ -7,6 +7,10 @@ on:
     paths:
       - ci-tests/**
 
+defaults:
+  run:
+    shell: sh
+
 jobs:
   test-reviewers-file:
     name: Test REVIEWERS file

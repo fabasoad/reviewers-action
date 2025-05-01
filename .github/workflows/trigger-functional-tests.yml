@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Generate GitHub token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: "${{ vars.APP_PR_ACCESS_ID }}"
           private-key: "${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}"

@@ -2,8 +2,8 @@
 # shellcheck disable=SC2039
 
 main() {
+  fail="false"
   if ! command -v curl &> /dev/null; then
-    fail="false"
     if [ "${RUNNER_OS}" = "macOS" ]; then
       if command -v brew &> /dev/null; then
         brew install curl

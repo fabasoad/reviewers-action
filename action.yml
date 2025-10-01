@@ -50,7 +50,7 @@ runs:
 
     - name: Setup node
       if: steps.tools.outputs.node == 'false' || steps.tools.outputs.npm == 'false'
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: "23"
 

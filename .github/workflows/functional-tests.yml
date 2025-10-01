@@ -25,7 +25,7 @@ jobs:
           app-id: ${{ vars.APP_PR_ACCESS_ID }}
           private-key: ${{ secrets.APP_PR_ACCESS_PRIVATE_KEY }}
       - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0

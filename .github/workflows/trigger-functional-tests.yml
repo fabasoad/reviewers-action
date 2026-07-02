@@ -28,43 +28,48 @@ defaults:
 jobs:
   prepare-pr:
     name: Prepare PR for test
-    timeout-minutes: 2
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions: {}
     steps:
       - name: Generate GitHub token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: "${{ vars.GH_APP_PR_CRUD_APP_ID }}"
           private-key: "${{ secrets.GH_APP_PR_CRUD_PRIVATE_KEY }}"
       - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
+          persist-credentials: "false"
       - name: Modify files
         run: |
-          echo "${{ github.run_id }}" > ci-tests/test1.txt
-          echo "${{ github.run_id }}" > ci-tests/test2.txt
+          echo "${GITHUB_RUN_ID}" > ci-tests/test1.txt
+          echo "${GITHUB_RUN_ID}" > ci-tests/test2.txt
       - name: Create PR
         id: create-pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           base: ${{ github.head_ref }}
           branch: automation/job-${{ github.run_id }}
           title: "[automation] job #${{ github.run_id }}"
           token: ${{ steps.app-token.outputs.token }}
       - name: Print notice about PR creation
+        env:
+          CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER: "${{ steps.create-pr.outputs.pull-request-number }}"
+          CREATE_PR_OUTPUT_PULL_REQUEST_URL: "${{ steps.create-pr.outputs.pull-request-url }}"
         run: |
-          pr_number="${{ steps.create-pr.outputs.pull-request-number }}"
-          pr_url="${{ steps.create-pr.outputs.pull-request-url }}"
-          echo "::notice title=PR #${pr_number} is created::${pr_url}"
+          echo "::notice title=PR #${CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER} is created::${CREATE_PR_OUTPUT_PULL_REQUEST_URL}"
       - name: Wait until PR is closed
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
+        env:
+          CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER: "${{ steps.create-pr.outputs.pull-request-number }}"
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |
-            const prNumber = ${{ steps.create-pr.outputs.pull-request-number }};
+            const prNumber = process.env.CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER;
             const sleep = (sec) => new Promise(r => setTimeout(r, sec * 1000));
             while (true) {
               const resp = await github.rest.issues.get({
@@ -86,7 +91,8 @@ jobs:
               break;
             }
       - name: Print notice about PR closing
+        env:
+          CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER: "${{ steps.create-pr.outputs.pull-request-number }}"
+          CREATE_PR_OUTPUT_PULL_REQUEST_URL: "${{ steps.create-pr.outputs.pull-request-url }}"
         run: |
-          pr_number="${{ steps.create-pr.outputs.pull-request-number }}"
-          pr_url="${{ steps.create-pr.outputs.pull-request-url }}"
-          echo "::notice title=PR #${pr_number} is closed::${pr_url}"
+          echo "::notice title=PR #${CREATE_PR_OUTPUT_PULL_REQUEST_NUMBER} is closed::${CREATE_PR_OUTPUT_PULL_REQUEST_URL}"

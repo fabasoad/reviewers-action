@@ -16,26 +16,28 @@ jobs:
     name: Test REVIEWERS file
     if: ${{ startsWith(github.event.pull_request.title, '[automation]') }}
     timeout-minutes: 5
+    permissions: {}
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.GH_APP_PR_CRUD_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PR_CRUD_PRIVATE_KEY }}
+          app-id: "${{ vars.GH_APP_PR_CRUD_APP_ID }}"
+          private-key: "${{ secrets.GH_APP_PR_CRUD_PRIVATE_KEY }}"
       - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          token: "${{ steps.app-token.outputs.token }}"
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: "${{ github.event.pull_request.head.ref }}"
+          persist-credentials: "false"
       - name: Assign reviewers
         uses: ./
         with:
           github-token: ${{ steps.app-token.outputs.token }}
       - name: Validate assigned reviewers
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |

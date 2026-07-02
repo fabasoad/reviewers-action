@@ -12,7 +12,7 @@ main() {
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer ${github_token}" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -H "X-GitHub-Api-Version: 2026-03-10" \
     "${github_api_url}/repos/${github_repository}/pulls/${pr_number}/requested_reviewers" \
     -d "${reviewers_json}"
 }

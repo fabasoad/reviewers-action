@@ -50,7 +50,7 @@ runs:
 
     - name: Setup node
       if: steps.tools.outputs.node == 'false' || steps.tools.outputs.npm == 'false'
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: "24"
 
@@ -69,22 +69,24 @@ runs:
       id: reviewers
       env:
         INPUT_REVIEWERS_FILENAME: "${{ inputs.reviewers-filename }}"
-      shell: bash
+        CHANGED_FILES_OUTPUT_ALL: "${{ steps.changed-files.outputs.all }}"
       run: |
-        ${{ github.action_path }}/src/get-reviewers.sh \
+        ${GITHUB_ACTION_PATH}/src/get-reviewers.sh \
           "${INPUT_REVIEWERS_FILENAME}" \
-          "${{ steps.changed-files.outputs.all }}"
+          "${CHANGED_FILES_OUTPUT_ALL}"
+      shell: bash
 
     - name: Assign reviewers
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         INPUT_PR_NUMBER: ${{ inputs.pr-number }}
-      shell: sh
+        REVIEWERS_OUTPUT_JSON: "${{ steps.reviewers.outputs.json }}"
       run: |
         ./assign-reviewers.sh \
           "${GITHUB_API_URL}" \
           "${GITHUB_REPOSITORY}" \
           "${GH_TOKEN}" \
           "${INPUT_PR_NUMBER}" \
-          '${{ steps.reviewers.outputs.json }}'
+          "${REVIEWERS_OUTPUT_JSON}"
+      shell: sh
       working-directory: ${{ github.action_path }}/src
